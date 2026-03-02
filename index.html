@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 3: Transport Layer — Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Syne:wght@400;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0e13;
+    --surface: #14161e;
+    --card: #1a1d28;
+    --border: #252840;
+    --accent1: #5b7fff;
+    --accent2: #ff6b6b;
+    --accent3: #4ecdc4;
+    --accent4: #ffe66d;
+    --text: #e8eaf6;
+    --muted: #7b82a8;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Syne', sans-serif;
+    --body: 'Lora', serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #0d0e13 0%, #131625 50%, #0d1229 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(91,127,255,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header::after {
+    content: 'CH.3';
+    position: absolute;
+    right: 40px; bottom: -10px;
+    font-family: var(--display);
+    font-size: 140px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.025);
+    line-height: 1;
+    letter-spacing: -8px;
+    user-select: none;
+  }
+  .header-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent1);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 16px;
+  }
+  .header-desc {
+    font-family: var(--body);
+    font-style: italic;
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 500px;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav a {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 14px 18px;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  nav a:hover { color: var(--accent1); border-bottom-color: var(--accent1); }
+
+  /* MAIN LAYOUT */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 40px 80px;
+  }
+
+  /* SECTIONS */
+  section {
+    margin-bottom: 60px;
+    scroll-margin-top: 60px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent1);
+    background: rgba(91,127,255,0.1);
+    border: 1px solid rgba(91,127,255,0.2);
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  h2 {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  h3 {
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 28px 0 10px;
+  }
+
+  p { margin-bottom: 12px; color: #c5c9e0; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 26px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 15px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .card p { margin-bottom: 0; font-size: 14.5px; }
+
+  /* COMPARISON TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  .compare-table th {
+    background: rgba(91,127,255,0.12);
+    color: var(--accent1);
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 16px;
+    text-align: left;
+    border: 1px solid var(--border);
+  }
+  .compare-table td {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    color: #c5c9e0;
+    vertical-align: top;
+    background: var(--card);
+  }
+  .compare-table tr:hover td { background: #1f2233; }
+  .yes { color: var(--accent3); font-weight: 600; }
+  .no  { color: var(--accent2); }
+
+  /* CODE BLOCK */
+  .code {
+    background: #0a0b10;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent1);
+    border-radius: 6px;
+    padding: 16px 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: #a8d8ff;
+    margin: 12px 0;
+    overflow-x: auto;
+    line-height: 1.6;
+  }
+  .code .cm { color: #6a7a9e; }
+  .code .kw { color: var(--accent4); }
+  .code .val { color: var(--accent3); }
+
+  /* FORMULA */
+  .formula {
+    background: rgba(78,205,196,0.06);
+    border: 1px solid rgba(78,205,196,0.2);
+    border-radius: 6px;
+    padding: 14px 20px;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent3);
+    margin: 12px 0;
+    text-align: center;
+  }
+
+  /* CALLOUT */
+  .callout {
+    display: flex;
+    gap: 14px;
+    background: rgba(255,230,109,0.05);
+    border: 1px solid rgba(255,230,109,0.2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 14px 0;
+  }
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .callout p { font-size: 14px; color: #d4c989; margin: 0; }
+  .callout-warn { background: rgba(255,107,107,0.05); border-color: rgba(255,107,107,0.2); }
+  .callout-warn p { color: #e09090; }
+  .callout-warn .callout-icon::before { content: '⚠️'; }
+  .callout .callout-icon::before { content: '💡'; }
+
+  /* TAGS / PILLS */
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+  .tag-blue { color: var(--accent1); border-color: rgba(91,127,255,0.3); background: rgba(91,127,255,0.07); }
+  .tag-green { color: var(--accent3); border-color: rgba(78,205,196,0.3); background: rgba(78,205,196,0.07); }
+  .tag-red { color: var(--accent2); border-color: rgba(255,107,107,0.3); background: rgba(255,107,107,0.07); }
+  .tag-yellow { color: var(--accent4); border-color: rgba(255,230,109,0.3); background: rgba(255,230,109,0.07); }
+
+  /* FLOW / STEP INDICATOR */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 14px 0;
+  }
+  .flow-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .flow-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .flow-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(91,127,255,0.15);
+    border: 2px solid var(--accent1);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent1);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .flow-connector {
+    width: 2px;
+    flex-grow: 1;
+    min-height: 12px;
+    background: var(--border);
+    margin: 3px 0;
+  }
+  .flow-content { padding-bottom: 16px; padding-top: 4px; }
+  .flow-content strong { color: #e8eaf6; font-family: var(--display); font-size: 14px; }
+  .flow-content p { font-size: 13.5px; margin: 4px 0 0; }
+
+  /* PROTOCOL EVOLUTION */
+  .rdt-chain {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 14px 0;
+  }
+  .rdt-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent1);
+    border-radius: 6px;
+    padding: 14px 18px;
+  }
+  .rdt-item.adds { border-left-color: var(--accent3); }
+  .rdt-version {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent1);
+    margin-bottom: 4px;
+  }
+  .rdt-item.adds .rdt-version { color: var(--accent3); }
+  .rdt-item strong { color: #fff; font-family: var(--display); font-size: 14px; display: block; margin-bottom: 4px; }
+  .rdt-item p { font-size: 13.5px; margin: 0; }
+
+  /* GBN vs SR */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 14px 0;
+  }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* CONGESTION STATES */
+  .state-machine {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 14px 0;
+  }
+  .state-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    position: relative;
+  }
+  .state-box .state-name {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .state-box .rule { font-size: 13.5px; color: #c5c9e0; margin-bottom: 4px; }
+  .state-arrow {
+    text-align: center;
+    font-size: 20px;
+    color: var(--muted);
+  }
+  .state-arrow .trigger {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    display: block;
+  }
+
+  /* HEADER FIELDS */
+  .header-field-grid {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 6px 16px;
+    margin: 10px 0;
+  }
+  .hf-name { font-family: var(--mono); font-size: 13px; color: var(--accent1); }
+  .hf-desc { font-size: 14px; color: #c5c9e0; }
+
+  /* SUMMARY TABLE */
+  .mech-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .mech-table th {
+    font-family: var(--mono); font-size: 11px; color: var(--accent1);
+    background: rgba(91,127,255,0.1); border: 1px solid var(--border);
+    padding: 10px 14px; text-align: left; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .mech-table td { padding: 10px 14px; border: 1px solid var(--border); background: var(--card); vertical-align: top; color: #c5c9e0; }
+  .mech-table tr:hover td { background: #1f2233; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 30px 0; }
+
+  ul { padding-left: 20px; margin: 8px 0; }
+  li { font-size: 14.5px; color: #c5c9e0; margin-bottom: 5px; }
+  li strong { color: #e8eaf6; }
+
+  .highlight { color: var(--accent4); font-weight: 600; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 30px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">Kurose &amp; Ross · Computer Networking: A Top-Down Approach</div>
+  <h1>Chapter 3: Transport Layer</h1>
+  <p class="header-desc">Everything you need to know — protocols, principles, mechanisms, and exam traps — all in one place.</p>
+</header>
+
+<nav>
+  <a href="#overview">Overview</a>
+  <a href="#mux">Mux/Demux</a>
+  <a href="#udp">UDP</a>
+  <a href="#rdt">RDT Protocols</a>
+  <a href="#pipeline">Pipelining</a>
+  <a href="#tcp">TCP</a>
+  <a href="#flow">Flow Control</a>
+  <a href="#conn">Connection Mgmt</a>
+  <a href="#congestion">Congestion</a>
+  <a href="#tcpcc">TCP Congestion Control</a>
+  <a href="#quic">QUIC</a>
+  <a href="#compare">Big Comparisons</a>
+</nav>
+
+<main>
+
+<!-- ============================= SECTION 1 ============================= -->
+<section id="overview">
+  <div class="section-header">
+    <span class="section-num">§ 3.1</span>
+    <h2>What the Transport Layer Does</h2>
+  </div>
+
+  <p>The transport layer provides <strong>logical communication between application processes</strong> running on different hosts. Think of it this way:</p>
+
+  <div class="callout"><div class="callout-icon"></div><p><strong>Analogy (the book's classic):</strong> The postal service moves letters <em>house-to-house</em>. Ann and Bill (inside each house) move letters <em>person-to-person</em>. The postal service = network layer (IP). Ann &amp; Bill = transport layer (TCP/UDP).</p></div>
+
+  <div class="compare-table" style="overflow-x:auto">
+    <table class="compare-table" style="min-width:400px">
+      <thead><tr><th>Concept</th><th>In the analogy</th><th>In the network</th></tr></thead>
+      <tbody>
+        <tr><td>Messages</td><td>Letters</td><td>Application data</td></tr>
+        <tr><td>Processes</td><td>Cousins</td><td>Application processes</td></tr>
+        <tr><td>Hosts</td><td>Houses</td><td>End systems</td></tr>
+        <tr><td>Transport protocol</td><td>Ann &amp; Bill</td><td>TCP / UDP</td></tr>
+        <tr><td>Network protocol</td><td>Postal service</td><td>IP</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Key Facts</h3>
+  <ul>
+    <li>Transport protocols run <strong>only in end systems</strong> — routers don't touch transport headers.</li>
+    <li>IP is <strong>unreliable / best-effort</strong>: no guarantee of delivery, order, or integrity.</li>
+    <li>TCP builds reliability <em>on top of</em> unreliable IP. UDP does not.</li>
+  </ul>
+
+  <div class="card">
+    <div class="card-title">Two Internet Transport Protocols</div>
+    <p><strong>UDP</strong> (User Datagram Protocol) — connectionless, unreliable. Gives you only: multiplexing/demultiplexing + error checking. That's it.</p>
+    <p style="margin-top:8px"><strong>TCP</strong> (Transmission Control Protocol) — connection-oriented, reliable. Gives you: mux/demux, error checking, reliable data transfer, flow control, congestion control, connection management.</p>
+  </div>
+</section>
+
+<!-- ============================= SECTION 2 ============================= -->
+<section id="mux">
+  <div class="section-header">
+    <span class="section-num">§ 3.2</span>
+    <h2>Multiplexing &amp; Demultiplexing</h2>
+  </div>
+
+  <p><strong>Multiplexing</strong> (sender): Gather data from multiple sockets, wrap with transport headers, pass to network layer.<br>
+  <strong>Demultiplexing</strong> (receiver): Deliver incoming segments to the correct socket.</p>
+
+  <h3>How it Works — Sockets &amp; Port Numbers</h3>
+  <ul>
+    <li>Each socket gets a <strong>port number</strong> (16-bit: 0–65535). Well-known ports: 0–1023 (HTTP=80, HTTPS=443, DNS=53, FTP=21).</li>
+    <li>A <strong>segment</strong> carries: source port, destination port (+ source/dest IP addresses at network layer).</li>
+  </ul>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">🔵 UDP Demux</div>
+      <p>Uses only <strong>destination IP + destination port</strong>. Two different source IPs sending to the same dest port → <em>same socket</em>.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🟢 TCP Demux</div>
+      <p>Uses <strong>all four values</strong>: src IP, src port, dst IP, dst port. Same dest port but different src → <em>different sockets</em>. Web servers exploit this for per-client connections.</p>
+    </div>
+  </div>
+  <div class="callout-warn callout"><div class="callout-icon"></div><p>Common exam trap: A web server receiving two connections from different clients on port 80 uses <em>different</em> sockets for each, even though both have destination port 80. This is because TCP uses all four tuple values.</p></div>
+</section>
+
+<!-- ============================= SECTION 3 ============================= -->
+<section id="udp">
+  <div class="section-header">
+    <span class="section-num">§ 3.3</span>
+    <h2>Connectionless Transport: UDP</h2>
+  </div>
+
+  <h3>Why Use UDP?</h3>
+  <ul>
+    <li><strong>No connection setup</strong> — no delay before sending.</li>
+    <li><strong>No connection state</strong> — servers can support more clients.</li>
+    <li><strong>No congestion control</strong> — can send at any rate (streaming media, DNS prefer this).</li>
+    <li>Small header overhead: <strong>8 bytes</strong> vs TCP's 20 bytes.</li>
+    <li>Used by: DNS, SNMP, streaming video, online gaming, VoIP.</li>
+  </ul>
+
+  <h3>UDP Segment Structure</h3>
+  <div class="header-field-grid">
+    <span class="hf-name">Source Port</span><span class="hf-desc">16 bits — port of sending process</span>
+    <span class="hf-name">Dest Port</span><span class="hf-desc">16 bits — port of receiving process</span>
+    <span class="hf-name">Length</span><span class="hf-desc">16 bits — length of entire UDP segment (header + data), in bytes</span>
+    <span class="hf-name">Checksum</span><span class="hf-desc">16 bits — error detection</span>
+  </div>
+  <p>Total header = <strong>8 bytes</strong> (4 fields × 2 bytes each).</p>
+
+  <h3>UDP Checksum — How It Works</h3>
+  <p>Uses <strong>1's complement arithmetic</strong>:</p>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">1</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Sender</strong>: Treats segment contents as 16-bit integers. Sums them all. Takes 1's complement of the result. Puts it in the checksum field.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">2</div></div>
+      <div class="flow-content"><strong>Receiver</strong>: Sums all 16-bit words including checksum. If no errors → result is all 1s (i.e., 1111...1). If any bit = 0, there's an error.</div>
+    </div>
+  </div>
+  <div class="callout"><div class="callout-icon"></div><p>The checksum can detect most errors but <strong>not all</strong>. Two errors can cancel out. The checksum can't <em>correct</em> errors — UDP just discards corrupt segments.</p></div>
+</section>
+
+<!-- ============================= SECTION 4 ============================= -->
+<section id="rdt">
+  <div class="section-header">
+    <span class="section-num">§ 3.4</span>
+    <h2>Principles of Reliable Data Transfer (RDT)</h2>
+  </div>
+
+  <p>These are the theoretical building blocks. Each version adds one more mechanism to handle a harder channel model.</p>
+
+  <h3>The RDT Protocol Evolution</h3>
+  <div class="rdt-chain">
+    <div class="rdt-item">
+      <div class="rdt-version">rdt 1.0</div>
+      <strong>Perfect channel — nothing can go wrong</strong>
+      <p>Channel is perfectly reliable. Sender just sends. Receiver just receives. No error handling needed. Unrealistic but foundational.</p>
+    </div>
+    <div class="rdt-item adds">
+      <div class="rdt-version">rdt 2.0 — ADDS: checksums + ACK/NAK</div>
+      <strong>Channel with bit errors (no packet loss)</strong>
+      <p>Detects corrupted packets via checksum. Receiver sends ACK (good) or NAK (bad). Sender retransmits on NAK. <span class="highlight">Stop-and-wait</span>: sender can't send new data until ACK received. <strong>Fatal flaw</strong>: ACK/NAK can itself be corrupted!</p>
+    </div>
+    <div class="rdt-item adds">
+      <div class="rdt-version">rdt 2.1 — ADDS: sequence numbers (0 and 1)</div>
+      <strong>Handles corrupted ACK/NAK</strong>
+      <p>Sender adds <strong>1-bit sequence number</strong> (0 or 1) to each packet. If ACK/NAK is garbled, sender retransmits. Receiver uses sequence number to detect duplicates. Also called the <span class="highlight">alternating-bit protocol</span>.</p>
+    </div>
+    <div class="rdt-item adds">
+      <div class="rdt-version">rdt 2.2 — ADDS: NAK-free (ACK-only)</div>
+      <strong>Same capability, no NAKs</strong>
+      <p>Eliminates NAK. Instead, receiver sends ACK with the sequence number of the last <em>correctly</em> received packet. Duplicate ACK = implicit NAK for the next packet. (This is basically what TCP does!)</p>
+    </div>
+    <div class="rdt-item adds">
+      <div class="rdt-version">rdt 3.0 — ADDS: timer / timeout (handles packet loss)</div>
+      <strong>Channel with bit errors AND packet loss</strong>
+      <p>Sender adds a <strong>countdown timer</strong>. If no ACK within timeout, retransmit. Handles: lost data packets, lost ACKs, premature timeouts (→ duplicate packets, but sequence numbers handle those). This is the <span class="highlight">alternating-bit protocol</span>, fully functional.</p>
+    </div>
+  </div>
+
+  <h3>The Four Mechanisms (Memorize These)</h3>
+  <div class="two-col">
+    <div class="card"><div class="card-title">Checksum</div><p>Detect bit errors in a packet.</p></div>
+    <div class="card"><div class="card-title">Sequence Numbers</div><p>Detect duplicates, identify in-order delivery.</p></div>
+    <div class="card"><div class="card-title">ACK / Timer</div><p>Confirm receipt; retransmit if timeout expires before ACK.</p></div>
+    <div class="card"><div class="card-title">Retransmission</div><p>Re-send on timeout or NAK (or duplicate ACK).</p></div>
+  </div>
+
+  <h3>rdt 3.0 Performance Problem</h3>
+  <p>rdt 3.0 is stop-and-wait: terrible utilization. Example: 1 Gbps link, RTT = 30ms, packet = 1000 bytes:</p>
+  <div class="formula">U<sub>sender</sub> = (L/R) / (RTT + L/R) = 0.008ms / 30.008ms ≈ 0.00027 (0.027%)</div>
+  <p>That's only <strong>267 kbps effective throughput</strong> on a 1 Gbps link! The fix is <strong>pipelining</strong>.</p>
+</section>
+
+<!-- ============================= SECTION 5 ============================= -->
+<section id="pipeline">
+  <div class="section-header">
+    <span class="section-num">§ 3.4.2–3.4.4</span>
+    <h2>Pipelining: GBN &amp; Selective Repeat</h2>
+  </div>
+
+  <p><strong>Pipelining</strong>: allow the sender to transmit multiple unacknowledged packets simultaneously. Window size N = number of unACK'd packets allowed in flight.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">🔄 Go-Back-N (GBN)</div>
+      <ul style="margin-top:8px">
+        <li>Sender window: <strong>N</strong> unACK'd packets</li>
+        <li>Receiver window: <strong>1</strong> (in-order only)</li>
+        <li>On timeout of packet n: retransmit <strong>n, n+1, ..., n+N-1</strong> (all)</li>
+        <li>Receiver <strong>discards</strong> out-of-order packets (sends ACK for last in-order)</li>
+        <li>Uses <strong>cumulative ACKs</strong></li>
+        <li>Single timer for oldest unACK'd packet</li>
+        <li>Sequence number space: 2<sup>k</sup> for k-bit field; window ≤ 2<sup>k</sup>–1</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🎯 Selective Repeat (SR)</div>
+      <ul style="margin-top:8px">
+        <li>Sender window: <strong>N</strong> unACK'd packets</li>
+        <li>Receiver window: <strong>N</strong></li>
+        <li>On timeout: retransmit <strong>only that packet</strong></li>
+        <li>Receiver <strong>buffers</strong> out-of-order packets; delivers in-order to app</li>
+        <li>Uses <strong>individual ACKs</strong> per packet</li>
+        <li>Individual timer per unACK'd packet</li>
+        <li>Window ≤ 2<sup>k–1</sup> (half the sequence space!) to avoid ambiguity</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout-warn callout"><div class="callout-icon"></div><p><strong>SR window size constraint:</strong> Window must be ≤ half the sequence number space. With sequence numbers 0–3 (4 values), window max = 2. Otherwise the receiver can't tell if an arriving packet is a retransmit of an old one or a new one.</p></div>
+
+  <h3>Key Difference at a Glance</h3>
+  <div class="compare-table" style="overflow-x:auto">
+    <table class="compare-table" style="min-width:400px">
+      <thead><tr><th>Property</th><th>GBN</th><th>SR</th></tr></thead>
+      <tbody>
+        <tr><td>On packet loss</td><td>Resend ALL from lost packet</td><td>Resend ONLY lost packet</td></tr>
+        <tr><td>Receiver buffer</td><td>None (discard out-of-order)</td><td>Buffer out-of-order packets</td></tr>
+        <tr><td>ACK type</td><td>Cumulative</td><td>Individual (selective)</td></tr>
+        <tr><td>Max window size</td><td>2<sup>k</sup>–1</td><td>2<sup>k–1</sup> (half seq space)</td></tr>
+        <tr><td>Bandwidth use</td><td>Wastes BW re-sending good packets</td><td>More efficient</td></tr>
+        <tr><td>Complexity</td><td>Simpler receiver</td><td>More complex</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>TCP is a <strong>hybrid</strong> of GBN and SR: cumulative ACKs like GBN, but buffers out-of-order segments like SR.</p>
+</section>
+
+<!-- ============================= SECTION 6 ============================= -->
+<section id="tcp">
+  <div class="section-header">
+    <span class="section-num">§ 3.5</span>
+    <h2>TCP: Connection-Oriented Transport</h2>
+  </div>
+
+  <div class="tags">
+    <span class="tag tag-green">Reliable</span>
+    <span class="tag tag-blue">Connection-Oriented</span>
+    <span class="tag tag-blue">Full-Duplex</span>
+    <span class="tag tag-blue">Point-to-Point</span>
+    <span class="tag tag-green">Flow Control</span>
+    <span class="tag tag-green">Congestion Control</span>
+  </div>
+
+  <h3>TCP Segment Structure (Header = 20 bytes typical)</h3>
+  <div class="header-field-grid">
+    <span class="hf-name">Source Port</span><span class="hf-desc">16 bits</span>
+    <span class="hf-name">Dest Port</span><span class="hf-desc">16 bits</span>
+    <span class="hf-name">Sequence #</span><span class="hf-desc">32 bits — byte-stream position of <em>first byte</em> in this segment</span>
+    <span class="hf-name">ACK #</span><span class="hf-desc">32 bits — next byte the sender <em>expects</em> from the other side</span>
+    <span class="hf-name">Header Length</span><span class="hf-desc">4 bits — length in 32-bit words</span>
+    <span class="hf-name">Flags</span><span class="hf-desc">6 bits: ACK, RST, SYN, FIN, CWR, ECE, URG, PSH</span>
+    <span class="hf-name">Receive Window</span><span class="hf-desc">16 bits — for flow control (rwnd)</span>
+    <span class="hf-name">Checksum</span><span class="hf-desc">16 bits — error detection</span>
+    <span class="hf-name">Urgent Pointer</span><span class="hf-desc">16 bits — rarely used in practice</span>
+    <span class="hf-name">Options</span><span class="hf-desc">Variable — MSS negotiation, window scaling, timestamps</span>
+  </div>
+
+  <h3>Sequence Numbers &amp; ACK Numbers</h3>
+  <ul>
+    <li>Sequence numbers are <strong>byte-stream offsets</strong>, not packet numbers.</li>
+    <li>If a segment starts at byte 0 and has 1000 bytes of data → seq# = 0. Next segment → seq# = 1000.</li>
+    <li><strong>ACK number</strong> = sequence number of the <em>next byte expected</em>. E.g., if bytes 0–535 received, ACK = 536.</li>
+    <li>TCP uses <strong>cumulative acknowledgments</strong> — ACK only up to first gap.</li>
+    <li>Initial sequence numbers are chosen <em>randomly</em> to prevent old segments from being misinterpreted.</li>
+  </ul>
+
+  <div class="callout"><div class="callout-icon"></div><p><strong>Telnet Example</strong>: Client (ISN=42) sends 'C'. Segment: seq=42, ACK=79, data='C'. Server (ISN=79) echoes back: seq=79, ACK=43, data='C'. Client ACKs: seq=43, ACK=80, no data.</p></div>
+
+  <h3>RTT Estimation &amp; Timeout</h3>
+  <div class="formula">EstimatedRTT = (1 – α) · EstimatedRTT + α · SampleRTT &nbsp;&nbsp;[α = 0.125]</div>
+  <div class="formula">DevRTT = (1 – β) · DevRTT + β · |SampleRTT – EstimatedRTT| &nbsp;&nbsp;[β = 0.25]</div>
+  <div class="formula">TimeoutInterval = EstimatedRTT + 4 · DevRTT</div>
+  <ul>
+    <li>EWMA (Exponential Weighted Moving Average) — recent samples get more weight.</li>
+    <li>SampleRTT is <strong>never measured for retransmitted segments</strong> (Karn's algorithm).</li>
+    <li>On each timeout: <strong>double the TimeoutInterval</strong> (limited congestion control).</li>
+    <li>Initial TimeoutInterval = <strong>1 second</strong>.</li>
+  </ul>
+
+  <h3>TCP Reliable Data Transfer</h3>
+  <div class="code">
+<span class="cm">// Three key events at TCP sender:</span>
+<span class="kw">Data from app</span>:  create segment → start timer if not running → send to IP
+<span class="kw">Timeout</span>:         retransmit oldest unACK'd segment → restart timer
+<span class="kw">ACK received</span> (y): if y > SendBase → update SendBase → restart timer if more unACK'd
+  </div>
+
+  <h3>Fast Retransmit</h3>
+  <p>Don't wait for timeout — retransmit immediately on <strong>3 duplicate ACKs</strong>.</p>
+  <ul>
+    <li>Duplicate ACK = ACK for something already acknowledged (indicates gap in received data).</li>
+    <li>3 dup ACKs = implicit signal that the segment after the triply-ACK'd one is lost.</li>
+    <li>Much faster than waiting for timeout (which could be ~1 second).</li>
+  </ul>
+</section>
+
+<!-- ============================= SECTION 7 ============================= -->
+<section id="flow">
+  <div class="section-header">
+    <span class="section-num">§ 3.5.5</span>
+    <h2>Flow Control</h2>
+  </div>
+
+  <p>Flow control prevents the <strong>sender from overflowing the receiver's buffer</strong>. Different from congestion control (which deals with the network).</p>
+
+  <div class="formula">rwnd = RcvBuffer – [LastByteRcvd – LastByteRead]</div>
+  <div class="formula">Constraint: LastByteSent – LastByteAcked ≤ rwnd</div>
+
+  <ul>
+    <li>Receiver advertises <code>rwnd</code> (receive window) in every TCP segment it sends.</li>
+    <li>Sender keeps unacknowledged data ≤ rwnd.</li>
+    <li><strong>Edge case</strong>: if rwnd = 0, sender keeps sending <strong>1-byte segments</strong> to probe. Otherwise sender would be blocked forever when buffer empties.</li>
+  </ul>
+
+  <div class="callout"><div class="callout-icon"></div><p><strong>Flow Control vs. Congestion Control</strong>: Flow control = receiver's buffer limit. Congestion control = network's capacity limit. Both throttle the sender but for different reasons. <code>min(rwnd, cwnd)</code> is the effective window.</p></div>
+</section>
+
+<!-- ============================= SECTION 8 ============================= -->
+<section id="conn">
+  <div class="section-header">
+    <span class="section-num">§ 3.5.6</span>
+    <h2>TCP Connection Management</h2>
+  </div>
+
+  <h3>Three-Way Handshake (Connection Setup)</h3>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">1</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Client → Server: SYN</strong><br>SYN=1, seq=client_ISN. Randomly chosen initial sequence number (client_ISN). No data.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">2</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Server → Client: SYNACK</strong><br>SYN=1, ACK=1, seq=server_ISN, ack=client_ISN+1. Server allocates buffers. No data.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">3</div></div>
+      <div class="flow-content"><strong>Client → Server: ACK</strong><br>SYN=0, ACK=1, seq=client_ISN+1, ack=server_ISN+1. Client allocates buffers. <em>Can carry data.</em></div>
+    </div>
+  </div>
+
+  <h3>Connection Teardown (4-Way FIN)</h3>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">1</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Client: FIN</strong> → enters FIN_WAIT_1</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">2</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Server: ACK</strong> → client enters FIN_WAIT_2, server enters CLOSE_WAIT</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">3</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Server: FIN</strong> → server enters LAST_ACK</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">4</div></div>
+      <div class="flow-content"><strong>Client: ACK</strong> → client enters <strong>TIME_WAIT</strong> (30s–2min), then CLOSED. Server moves to CLOSED.</div>
+    </div>
+  </div>
+
+  <div class="callout"><div class="callout-icon"></div><p><strong>TIME_WAIT</strong>: Client waits before fully closing to allow the final ACK to be resent if the server didn't receive it. This prevents old stale segments from confusing new connections.</p></div>
+
+  <h3>SYN Flood Attack &amp; SYN Cookies</h3>
+  <p>Attacker sends many SYN segments without completing handshake → server allocates resources for half-open connections → server overwhelmed (DoS).</p>
+  <p><strong>SYN Cookies</strong> (defense): Server doesn't allocate resources until the handshake completes. Instead, the server encodes connection state into the initial sequence number as a cryptographic hash (the "cookie"). Only allocates resources when a valid ACK arrives.</p>
+
+  <h3>MSS — Maximum Segment Size</h3>
+  <ul>
+    <li>MSS = max application data per segment (not including TCP header).</li>
+    <li>Determined by MTU (maximum transmission unit) of local link.</li>
+    <li>Ethernet/PPP MTU = 1500 bytes → MSS typically <strong>1460 bytes</strong> (1500 – 40 bytes for TCP/IP headers).</li>
+  </ul>
+</section>
+
+<!-- ============================= SECTION 9 ============================= -->
+<section id="congestion">
+  <div class="section-header">
+    <span class="section-num">§ 3.6</span>
+    <h2>Principles of Congestion Control</h2>
+  </div>
+
+  <h3>Costs of Congestion</h3>
+  <ul>
+    <li><strong>Large queuing delays</strong> as sending rate approaches link capacity.</li>
+    <li><strong>Wasted retransmissions</strong> — buffer overflow → packet drops → retransmit → wastes bandwidth.</li>
+    <li><strong>Wasted upstream capacity</strong> — a packet dropped at the 2nd hop means the 1st hop's work was wasted.</li>
+  </ul>
+
+  <h3>Two Approaches to Congestion Control</h3>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">End-to-End (TCP's approach)</div>
+      <p>Network gives <em>no explicit feedback</em>. End systems infer congestion from packet loss (timeout, triple dup ACK) and increasing delay.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Network-Assisted (ECN)</div>
+      <p>Routers <em>explicitly signal</em> congestion by marking bits in IP datagrams (ECN bits). Receiver relays signal to sender via ACK.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= SECTION 10 ============================= -->
+<section id="tcpcc">
+  <div class="section-header">
+    <span class="section-num">§ 3.7</span>
+    <h2>TCP Congestion Control</h2>
+  </div>
+
+  <p>TCP controls sending rate using the <strong>congestion window (cwnd)</strong>:</p>
+  <div class="formula">LastByteSent – LastByteAcked ≤ min(cwnd, rwnd)</div>
+  <p>Send rate ≈ cwnd / RTT bytes/sec. Adjust cwnd to control rate.</p>
+
+  <h3>The Three Algorithms: Slow Start, Congestion Avoidance, Fast Recovery</h3>
+
+  <div class="state-machine">
+    <div class="state-box">
+      <div class="state-name">Phase 1: Slow Start</div>
+      <div class="rule">▶ Start: cwnd = 1 MSS</div>
+      <div class="rule">▶ On each ACK: cwnd += 1 MSS → <strong>doubles every RTT</strong> (exponential growth)</div>
+      <div class="rule">▶ Exit when: cwnd reaches ssthresh → switch to Congestion Avoidance</div>
+      <div class="rule">▶ Exit when: triple dup ACK → Fast Recovery</div>
+      <div class="rule">▶ Exit when: timeout → cwnd = 1 MSS, ssthresh = cwnd/2, restart Slow Start</div>
+    </div>
+    <div class="state-arrow">↓ cwnd = ssthresh <span class="trigger">(reached slow-start threshold)</span></div>
+    <div class="state-box">
+      <div class="state-name">Phase 2: Congestion Avoidance</div>
+      <div class="rule">▶ On each ACK: cwnd += MSS × (MSS/cwnd) ≈ <strong>+1 MSS per RTT</strong> (linear growth)</div>
+      <div class="rule">▶ Exit when: timeout → cwnd = 1 MSS, ssthresh = cwnd/2, go to Slow Start</div>
+      <div class="rule">▶ Exit when: triple dup ACK → ssthresh = cwnd/2, cwnd = ssthresh + 3·MSS, go to Fast Recovery</div>
+    </div>
+    <div class="state-arrow">↓ triple dup ACK <span class="trigger">(partial loss signal)</span></div>
+    <div class="state-box">
+      <div class="state-name">Phase 3: Fast Recovery</div>
+      <div class="rule">▶ On each dup ACK: cwnd += 1 MSS</div>
+      <div class="rule">▶ Exit when: new ACK → cwnd = ssthresh, go to Congestion Avoidance</div>
+      <div class="rule">▶ Exit when: timeout → cwnd = 1 MSS, ssthresh = cwnd/2, go to Slow Start</div>
+    </div>
+  </div>
+
+  <h3>AIMD — The Big Picture</h3>
+  <p>Ignoring slow start, TCP uses <strong>Additive Increase, Multiplicative Decrease (AIMD)</strong>:</p>
+  <ul>
+    <li><strong>Additive Increase</strong>: +1 MSS per RTT in Congestion Avoidance (probing for bandwidth).</li>
+    <li><strong>Multiplicative Decrease</strong>: halve cwnd on triple dup ACK loss event.</li>
+    <li>This creates the characteristic <strong>sawtooth</strong> pattern in cwnd over time.</li>
+  </ul>
+  <div class="formula">Average throughput ≈ (0.75 × W) / RTT &nbsp;&nbsp; (where W = cwnd at loss)</div>
+
+  <h3>TCP Tahoe vs. TCP Reno</h3>
+  <div class="compare-table" style="overflow-x:auto">
+    <table class="compare-table" style="min-width:380px">
+      <thead><tr><th>Event</th><th>TCP Tahoe (older)</th><th>TCP Reno (standard)</th></tr></thead>
+      <tbody>
+        <tr><td>Timeout</td><td>cwnd=1, ssthresh=cwnd/2, Slow Start</td><td>Same as Tahoe</td></tr>
+        <tr><td>Triple dup ACK</td><td>cwnd=1, ssthresh=cwnd/2, Slow Start</td><td>cwnd=ssthresh+3, ssthresh=cwnd/2, Fast Recovery</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>Reno is smarter</strong>: triple dup ACK means some packets are still getting through, so it's less severe than a timeout. Reno responds more gracefully.</p>
+
+  <h3>TCP CUBIC</h3>
+  <ul>
+    <li>Modern default (Linux). Used by ~50% of major web servers.</li>
+    <li>After loss, ramps back up to W<sub>max</sub> quickly (cubic function), then slows near W<sub>max</sub>.</li>
+    <li>Key insight: after a loss, the network likely hasn't changed much — get back to W<sub>max</sub> fast.</li>
+  </ul>
+
+  <h3>ECN — Explicit Congestion Notification</h3>
+  <ul>
+    <li>Congested router sets ECN bits in IP header before dropping packets.</li>
+    <li>Receiver echoes congestion signal to sender via <strong>ECE bit in TCP ACK</strong>.</li>
+    <li>Sender reduces cwnd (as if triple dup ACK) and sets <strong>CWR bit</strong> in next segment.</li>
+    <li>Advantage: signal congestion <em>before</em> packet loss occurs.</li>
+  </ul>
+
+  <h3>Fairness</h3>
+  <p>With K TCP connections sharing a bottleneck link of rate R, AIMD converges to approximately R/K each — <strong>equal share</strong>.</p>
+  <div class="callout-warn callout"><div class="callout-icon"></div><p><strong>Fairness caveats:</strong> (1) UDP ignores congestion control → can crowd out TCP. (2) Applications using <em>parallel TCP connections</em> get unfair share. (3) Shorter RTT connections grow their window faster → get higher throughput at shared bottlenecks.</p></div>
+</section>
+
+<!-- ============================= SECTION 11 ============================= -->
+<section id="quic">
+  <div class="section-header">
+    <span class="section-num">§ 3.8</span>
+    <h2>QUIC — Quick UDP Internet Connections</h2>
+  </div>
+
+  <p>QUIC is an <strong>application-layer protocol</strong> built on top of UDP, designed for HTTP/3. Combines TCP's reliability + TLS's security in fewer round trips.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Traditional (HTTP/2 over TCP+TLS)</div>
+      <ul style="margin-top:8px; font-size:13.5px">
+        <li>1 RTT TCP handshake</li>
+        <li>1–2 RTT TLS handshake</li>
+        <li>HOL blocking: one lost packet stalls all streams</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">QUIC (HTTP/3 over QUIC/UDP)</div>
+      <ul style="margin-top:8px; font-size:13.5px">
+        <li>Combined connection + crypto handshake (fewer RTTs)</li>
+        <li>Multiple independent streams</li>
+        <li>A lost packet blocks <em>only its stream</em>, not others</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Key QUIC Features</h3>
+  <ul>
+    <li><strong>Connection-oriented &amp; secure</strong>: Built-in encryption (always). Handshakes combined.</li>
+    <li><strong>Streams</strong>: Multiple independent streams per connection. Each stream has its own reliable delivery.</li>
+    <li><strong>No HOL blocking</strong>: Unlike HTTP/2 over TCP, a dropped packet only affects its own stream.</li>
+    <li><strong>Congestion control</strong>: Based on TCP NewReno (RFC 6582).</li>
+    <li><strong>Application-layer</strong>: Can be updated faster than kernel-space TCP/UDP.</li>
+  </ul>
+</section>
+
+<!-- ============================= BIG COMPARISONS ============================= -->
+<section id="compare">
+  <div class="section-header">
+    <span class="section-num">Reference</span>
+    <h2>Master Comparison Tables</h2>
+  </div>
+
+  <h3>UDP vs. TCP — Everything</h3>
+  <div style="overflow-x:auto">
+    <table class="compare-table" style="min-width:480px">
+      <thead><tr><th>Property</th><th>UDP</th><th>TCP</th></tr></thead>
+      <tbody>
+        <tr><td>Connection setup</td><td class="no">None</td><td class="yes">3-way handshake</td></tr>
+        <tr><td>Reliable delivery</td><td class="no">No</td><td class="yes">Yes</td></tr>
+        <tr><td>Ordering</td><td class="no">No</td><td class="yes">Yes (in-order bytes)</td></tr>
+        <tr><td>Flow control</td><td class="no">No</td><td class="yes">Yes (rwnd)</td></tr>
+        <tr><td>Congestion control</td><td class="no">No</td><td class="yes">Yes (cwnd, AIMD)</td></tr>
+        <tr><td>Header size</td><td class="yes">8 bytes</td><td class="no">20 bytes (min)</td></tr>
+        <tr><td>Broadcast/Multicast</td><td class="yes">Yes</td><td class="no">No (point-to-point)</td></tr>
+        <tr><td>Error detection</td><td class="yes">Checksum</td><td class="yes">Checksum</td></tr>
+        <tr><td>State at sender</td><td class="yes">None</td><td class="no">Lots (buffers, vars)</td></tr>
+        <tr><td>Use cases</td><td>DNS, VoIP, video, gaming</td><td>HTTP, email, file transfer</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>RDT Protocol Summary</h3>
+  <div style="overflow-x:auto">
+    <table class="mech-table" style="min-width:500px">
+      <thead><tr><th>Protocol</th><th>Channel Model</th><th>New Mechanisms</th></tr></thead>
+      <tbody>
+        <tr><td>rdt 1.0</td><td>Perfect</td><td>(none)</td></tr>
+        <tr><td>rdt 2.0</td><td>Bit errors</td><td>Checksum, ACK, NAK, retransmit</td></tr>
+        <tr><td>rdt 2.1</td><td>Bit errors + garbled ACK/NAK</td><td>1-bit sequence numbers</td></tr>
+        <tr><td>rdt 2.2</td><td>Same as 2.1</td><td>NAK-free (dup ACK = implicit NAK)</td></tr>
+        <tr><td>rdt 3.0</td><td>Bit errors + packet loss</td><td>Timer/countdown, retransmit on timeout</td></tr>
+        <tr><td>GBN</td><td>Same + need throughput</td><td>Pipelining, sliding window, cumulative ACK</td></tr>
+        <tr><td>SR</td><td>Same + GBN inefficiency</td><td>Individual ACKs, receiver buffering</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>TCP Congestion Control States Summary</h3>
+  <div style="overflow-x:auto">
+    <table class="mech-table" style="min-width:500px">
+      <thead><tr><th>State</th><th>cwnd growth</th><th>Enter when</th><th>Exit when</th></tr></thead>
+      <tbody>
+        <tr><td>Slow Start</td><td>+1 MSS per ACK (doubles/RTT)</td><td>Start, or after timeout</td><td>cwnd = ssthresh → CA; triple dup ACK → FR; timeout → SS again</td></tr>
+        <tr><td>Congestion Avoidance</td><td>+MSS²/cwnd per ACK (+1 MSS/RTT)</td><td>cwnd reaches ssthresh</td><td>Triple dup ACK → FR; timeout → SS</td></tr>
+        <tr><td>Fast Recovery</td><td>+1 MSS per dup ACK</td><td>Triple dup ACK</td><td>New ACK → CA; timeout → SS</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>All Key Formulas at a Glance</h3>
+  <div class="code">
+<span class="cm">/* RTT & Timeout */</span>
+EstimatedRTT = 0.875 * EstimatedRTT + 0.125 * SampleRTT
+DevRTT = 0.75 * DevRTT + 0.25 * |SampleRTT - EstimatedRTT|
+TimeoutInterval = EstimatedRTT + 4 * DevRTT
+
+<span class="cm">/* Flow Control */</span>
+rwnd = RcvBuffer - [LastByteRcvd - LastByteRead]
+Constraint: LastByteSent - LastByteAcked ≤ rwnd
+
+<span class="cm">/* Congestion Control */</span>
+Constraint: LastByteSent - LastByteAcked ≤ min(cwnd, rwnd)
+Send rate ≈ cwnd / RTT   (bytes/sec)
+Avg throughput (TCP Reno) ≈ 0.75 * W / RTT
+
+<span class="cm">/* Stop-and-wait Utilization */</span>
+U_sender = (L/R) / (RTT + L/R)
+</div>
+
+  <h3>Quick-Fire Exam Facts</h3>
+  <div class="card">
+    <ul>
+      <li>TCP is <strong>full-duplex</strong> (simultaneous bidirectional data)</li>
+      <li>TCP is <strong>point-to-point</strong> only (no multicast)</li>
+      <li>TCP seq#s count <strong>bytes</strong>, not packets</li>
+      <li>ACK# = next <strong>expected</strong> byte (not last received)</li>
+      <li>TCP uses <strong>cumulative ACKs</strong></li>
+      <li>Fast retransmit triggers on <strong>3 duplicate ACKs</strong> (4 ACKs for same data total)</li>
+      <li>Timeout doubles TimeoutInterval each time (exponential backoff)</li>
+      <li>MSS = max application data per segment (NOT including TCP header)</li>
+      <li>MSS typical = <strong>1460 bytes</strong> (Ethernet MTU 1500 – 40 TCP/IP header)</li>
+      <li>SYN flood defense = <strong>SYN cookies</strong></li>
+      <li>UDP has <strong>8-byte header</strong>. TCP has <strong>20-byte minimum header</strong></li>
+      <li>GBN window ≤ 2<sup>k</sup>–1; SR window ≤ 2<sup>k–1</sup></li>
+      <li>Slow start is <em>not slow</em> — it's exponential! It's "slow" only compared to pre-TCP era</li>
+      <li>TCP Reno: 3 dup ACKs → cwnd = ssthresh + 3, ssthresh = cwnd/2</li>
+      <li>TCP Tahoe: always goes to cwnd=1 on any loss</li>
+      <li>QUIC = application-layer protocol over UDP, for HTTP/3</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Chapter 3 · Transport Layer · Kurose &amp; Ross, Computer Networking: A Top-Down Approach, 8th Ed.
+</footer>
+
+</body>
+</html>
